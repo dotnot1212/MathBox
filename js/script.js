@@ -156,7 +156,8 @@ const handleKeyInput = (key) => {
     } else if (num1 !== null) {
       num1 = (-parseFloat(num1)).toString();
     }
-  } else if (key === ".") {
+  }
+   else if (key === ".") {
     if (op === null) {
       // اگر num1 وجود ندارد یا 0 است، 0. را قرار بده
       if (num1 === null || num1 === "0" || num1 === "") {
@@ -229,6 +230,79 @@ document.addEventListener("keydown", (event) => {
     }
   }
 });
+
+function saveTransaction(num1, op, num2, result = null) {
+  let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+
+  const newTransaction = {
+    id: Date.now(),
+    num1: num1,
+    op: op,
+    num2: num2,
+    result: result,
+  };
+  transactions.push(newTransaction);
+
+  if (transactions.length > 20) {
+    transactions.shift();
+  }
+
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+  loadTransactions()
+}
+
+
+function loadTransactions() {
+  const transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+  const transactionList = document.querySelector(".transactions-list");
+
+  // پاک کردن لیست موجود
+  transactionList.innerHTML = "";
+
+  // افزودن معاملات به لیست
+  transactions.forEach((transaction) => {
+    const listItem = document.createElement("li");
+    listItem.classList.add('transactions-item');
+    listItem.setAttribute('data-set-id', transaction.id);
+    listItem.textContent = ` ${transaction.num1} ${transaction.op} ${transaction.num2} = ${
+      transaction.result !== undefined ? transaction.result : "Pending"
+    }`;
+  
+    listItem.addEventListener('click', () => {
+      num1 = transaction.num1; // مقدار num1 را ثبت کن
+      op = transaction.op;     // مقدار عملگر را ثبت کن
+      num2 = transaction.num2; // مقدار num2 را ثبت کن
+      result = transaction.result; // مقدار نتیجه را ثبت کن (در صورت نیاز)
+      newCalculation = false; 
+
+      // به‌روزرسانی نمایشگر
+      updateDisplay();
+    });
+  
+    // افزودن به ابتدای لیست
+  transactionList.insertBefore(listItem, transactionList.firstChild);
+  });
+  
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadTransactions(); // بازیابی و نمایش معاملات ذخیره‌شده
+});
+
+function saveLocal() {
+  if (num1 !== null && op !== null && num2 !== null) {
+    saveTransaction(num1, op, num2, result); // ارسال مقدار result
+  }
+}
+
+let btnDropList = document.querySelector('.op-btn-lasts')
+btnDropList.addEventListener('click',()=>{
+ 
+  document.querySelector('.transactions-list').classList.toggle('active')
+})
+
+
 
 document.getElementById("theme-toggle").addEventListener("click", function () {
   const body = document.body;
