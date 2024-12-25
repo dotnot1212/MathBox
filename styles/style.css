@@ -145,8 +145,11 @@ body {
   right: -7px;
 }
 .mid-title {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 40%;
-  margin: 0 auto;
   height: 40px;
   background-color: #ffffff;
   display: flex;
@@ -157,6 +160,10 @@ body {
   -moz-border-radius: 0 0 10px 10px;
   -ms-border-radius: 0 0 10px 10px;
   -o-border-radius: 0 0 10px 10px;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
 }
 .calculator-display {
   width: 80%;
@@ -244,6 +251,7 @@ body,
 .btn-sec-key {
   transition: background-color 0.3s, color 0.3s;
   text-decoration: none;
+  
 }
 
 .result-display {
@@ -261,4 +269,47 @@ body,
   font-size: 13px;
   color: rgb(138, 138, 138);
   direction: ltr;
+}
+.transactions-list{
+  position: absolute;
+  display: none;
+  top: 150%;
+  left: -100%;
+  width: 200px;
+  height: 150px;
+  padding: 5px 10px;
+  /*border: 1px solid black;
+  */list-style: none;
+  text-align: start;
+  overflow: auto;
+  background-color: #ffffff4d;
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  transition: all .3s ease;
+  -webkit-transition: all .3s ease;
+  -moz-transition: all .3s ease;
+  -ms-transition: all .3s ease;
+  -o-transition: all .3s ease;
+  opacity: 0;
+  box-shadow: 0 0 10px black;
+}
+.transactions-list.active{
+  display: block !important;
+  animation: opacity100 .5s ease forwards;
+  -webkit-animation: opacity100 .5s ease forwards;
+}
+.transactions-item{
+  border-bottom: 2px solid black;
+  color: #1b2631;
+  padding: 10px;
+}
+
+@keyframes opacity100 {
+  0% {
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+  
 }
