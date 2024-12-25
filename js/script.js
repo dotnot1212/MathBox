@@ -4,38 +4,38 @@ const resultDisplay = document.querySelector(".result-display");
 const buttons = document.querySelectorAll(".btn-sec-key");
 
 // Variables for calculation
-let num1 = null;
-let num2 = null;
-let op = null;
+let firstNumber = null;
+let secondNumber = null;
+let operator = null;
 let result = 0;
-let newCalculation = false;
+let isNewCalculation = false;
 
 // Function to update the display
 const updateDisplay = () => {
-  display.textContent = `${num1 !== null ? num1 : ""} ${
-    op !== null ? op : ""
-  } ${num2 !== null ? num2 : ""}`;
+  display.textContent = `${firstNumber !== null ? firstNumber : ""} ${
+    operator !== null ? operator : ""
+  } ${secondNumber !== null ? secondNumber : ""}`;
   resultDisplay.textContent = result;
 };
 
 // Function to reset calculator
 const resetCalculator = () => {
-  num1 = null;
-  num2 = null;
-  op = null;
+  firstNumber = null;
+  secondNumber = null;
+  operator = null;
   result = 0;
-  newCalculation = false;
+  isNewCalculation = false;
   display.textContent = ""; // Clear the main display
   resultDisplay.textContent = "0"; // Reset the result display to 0
 };
 
 // Function to calculate the result
 const calculateResult = () => {
-  if (num1 !== null && num2 !== null && op) {
-    const n1 = parseFloat(num1);
-    const n2 = parseFloat(num2);
+  if (firstNumber !== null && secondNumber !== null && operator) {
+    const n1 = parseFloat(firstNumber);
+    const n2 = parseFloat(secondNumber);
 
-    switch (op) {
+    switch (operator) {
       case "+":
         result = n1 + n2;
         break;
@@ -61,10 +61,10 @@ const calculateResult = () => {
     }
     saveLocal();
     // Prepare for new calculation
-    num1 = result;
-    num2 = null;
+    firstNumber = result;
+    secondNumber = null;
 
-    newCalculation = true;
+    isNewCalculation = true;
     updateDisplay();
   }
 };
@@ -72,18 +72,18 @@ let itemCounter = 0;
 function saveLocal() {
   let result = {
     id: itemCounter++,
-    num1: num1,
-    op: op,
-    num2: num2,
+    firstNumber: firstNumber,
+    operator: operator,
+    secondNumber: secondNumber,
   };
   localStorage.setItem(`${itemCounter}`, result);
 }
 function getLocal(number) {
   let pervResult = JSON.parse(localStorage.getItem(number));
   if (pervResult) {
-    num1 = pervResult.num1;
-    op = pervResult.op;
-    num2 = pervResult.num2;
+    firstNumber = pervResult.firstNumber;
+    operator = pervResult.operator;
+    secondNumber = pervResult.secondNumber;
 
     calculateResult();
   }
@@ -99,50 +99,50 @@ buttons.forEach((button) => {
 
 const handleKeyInput = (key) => {
   if (!isNaN(key)) {
-    if (newCalculation) {
-      if (op !== null) {
-        num2 = key;
-        newCalculation = false;
+    if (isNewCalculation) {
+      if (operator !== null) {
+        secondNumber = key;
+        isNewCalculation = false;
       } else {
         resetCalculator();
-        num1 = key;
-        newCalculation = false;
+        firstNumber = key;
+        isNewCalculation = false;
       }
-    } else if (op === null) {
+    } else if (operator === null) {
       // جلوگیری از اضافه کردن چندین صفر در ابتدای عدد
-      if (num1 === null || num1 === "0") {
-        num1 = key;
+      if (firstNumber === null || firstNumber === "0") {
+        firstNumber = key;
       } else {
-        num1 += key;
+        firstNumber += key;
       }
     } else {
       // جلوگیری از اضافه کردن چندین صفر در ابتدای عدد دوم
-      if (num2 === null || num2 === "0") {
-        num2 = key;
+      if (secondNumber === null || secondNumber === "0") {
+        secondNumber = key;
       } else {
-        num2 += key;
+        secondNumber += key;
       }
     }
   } else if (key === "clear") {
     resetCalculator();
   } else if (key === "eraser") {
     // Handle backspace/eraser
-    if (num2 !== null && num2 !== "0") {
-      num2 = num2.slice(0, -1); // حذف آخرین کاراکتر از num2
-      if (num2 == '') {
-        num2 = null
+    if (secondNumber !== null && secondNumber !== "0") {
+      secondNumber = secondNumber.slice(0, -1); // حذف آخرین کاراکتر از secondNumber
+      if (secondNumber == '') {
+        secondNumber = null
       }
-    } else if (num2 === "") {
+    } else if (secondNumber === "") {
       console.log('yes');
       
-      num2 = null; // اگر num2 خالی شد، مقدار آن را به null تغییر می‌دهیم
-      op = null;   // اگر num2 خالی شد، op نیز پاک می‌شود
-    } else if (op !== null) {
-      op = null; // حذف عملگر (op)
-    } else if (num1 !== null && num1 !== "0") {
-      num1 = num1.toString(); // تبدیل num1 به رشته
-      num1 = num1.slice(0, -1); // حذف آخرین کاراکتر از num1
-      if (num1 === "") num1 = "0"; // اگر خالی شد، مقدار را 0 تنظیم کن
+      secondNumber = null; // اگر secondNumber خالی شد، مقدار آن را به null تغییر می‌دهیم
+      operator = null;   // اگر secondNumber خالی شد، operator نیز پاک می‌شود
+    } else if (operator !== null) {
+      operator = null; // حذف عملگر (operator)
+    } else if (firstNumber !== null && firstNumber !== "0") {
+      firstNumber = firstNumber.toString(); // تبدیل firstNumber به رشته
+      firstNumber = firstNumber.slice(0, -1); // حذف آخرین کاراکتر از firstNumber
+      if (firstNumber === "") firstNumber = "0"; // اگر خالی شد، مقدار را 0 تنظیم کن
     }
   }
   
@@ -151,41 +151,41 @@ const handleKeyInput = (key) => {
    else if (key === "=") {
     calculateResult();
   } else if (key === "+/-") {
-    if (num2 !== null) {
-      num2 = (-parseFloat(num2)).toString();
-    } else if (num1 !== null) {
-      num1 = (-parseFloat(num1)).toString();
+    if (secondNumber !== null) {
+      secondNumber = (-parseFloat(secondNumber)).toString();
+    } else if (firstNumber !== null) {
+      firstNumber = (-parseFloat(firstNumber)).toString();
     }
   }
    else if (key === ".") {
-    if (op === null) {
-      // اگر num1 وجود ندارد یا 0 است، 0. را قرار بده
-      if (num1 === null || num1 === "0" || num1 === "") {
-        num1 = "0.";
-      } else if (!num1.includes(".")) {
-        num1 += "."; // فقط در صورتی که نقطه در num1 وجود نداشته باشد
+    if (operator === null) {
+      // اگر firstNumber وجود ندارد یا 0 است، 0. را قرار بده
+      if (firstNumber === null || firstNumber === "0" || firstNumber === "") {
+        firstNumber = "0.";
+      } else if (!firstNumber.includes(".")) {
+        firstNumber += "."; // فقط در صورتی که نقطه در firstNumber وجود نداشته باشد
       }
     } else {
-      // اگر op وجود دارد و num2 هنوز نداریم، 0. را به num2 اضافه کن
-      if (num2 === null || num2 === "0" || num2 === "") {
-        num2 = "0.";
-      } else if (!num2.includes(".")) {
-        num2 += "."; // فقط در صورتی که نقطه در num2 وجود نداشته باشد
+      // اگر operator وجود دارد و secondNumber هنوز نداریم، 0. را به secondNumber اضافه کن
+      if (secondNumber === null || secondNumber === "0" || secondNumber === "") {
+        secondNumber = "0.";
+      } else if (!secondNumber.includes(".")) {
+        secondNumber += "."; // فقط در صورتی که نقطه در secondNumber وجود نداشته باشد
       }
     }
   }
    else {
-    if (newCalculation) {
-      newCalculation = false;
-      op = key;
-      num2 = null;
-    } else if (num1 !== null && num2 === null) {
-      op = key;
-    } else if (num1 !== null && num2 !== null) {
+    if (isNewCalculation) {
+      isNewCalculation = false;
+      operator = key;
+      secondNumber = null;
+    } else if (firstNumber !== null && secondNumber === null) {
+      operator = key;
+    } else if (firstNumber !== null && secondNumber !== null) {
       calculateResult();
-      num1 = result;
-      op = key;
-      num2 = null;
+      firstNumber = result;
+      operator = key;
+      secondNumber = null;
     }
   }
 
@@ -231,15 +231,15 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-function saveTransaction(num1, op, num2, result = null) {
+function saveTransaction(firstNumber, operator, secondNumber, result = null) {
   let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
   const newTransaction = {
     id: Date.now(),
-    num1: num1,
-    op: op,
-    num2: num2,
-    result: result,
+    firstNumber: +firstNumber,
+    operator: operator,
+    secondNumber: +secondNumber,
+    result: +result,
   };
   transactions.push(newTransaction);
 
@@ -264,16 +264,16 @@ function loadTransactions() {
     const listItem = document.createElement("li");
     listItem.classList.add('transactions-item');
     listItem.setAttribute('data-set-id', transaction.id);
-    listItem.textContent = ` ${transaction.num1} ${transaction.op} ${transaction.num2} = ${
+    listItem.textContent = ` ${transaction.firstNumber} ${transaction.operator} ${transaction.secondNumber} = ${
       transaction.result !== undefined ? transaction.result : "Pending"
     }`;
   
     listItem.addEventListener('click', () => {
-      num1 = transaction.num1; // مقدار num1 را ثبت کن
-      op = transaction.op;     // مقدار عملگر را ثبت کن
-      num2 = transaction.num2; // مقدار num2 را ثبت کن
+      firstNumber = transaction.firstNumber; // مقدار firstNumber را ثبت کن
+      operator = transaction.operator;     // مقدار عملگر را ثبت کن
+      secondNumber = transaction.secondNumber; // مقدار secondNumber را ثبت کن
       result = transaction.result; // مقدار نتیجه را ثبت کن (در صورت نیاز)
-      newCalculation = false; 
+      isNewCalculation = false; 
 
       // به‌روزرسانی نمایشگر
       updateDisplay();
@@ -288,11 +288,46 @@ function loadTransactions() {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadTransactions(); // بازیابی و نمایش معاملات ذخیره‌شده
+
+  const loader = document.querySelector(".loader");
+  const progressBar = document.querySelector(".loader-line");
+  const percentageText = document.querySelector(".loader-percentage");
+  const percentageBg = document.querySelector(".loader-percentage-bg");
+
+  const updateProgress = (percentage) => {
+    percentageBg.style.width = `${percentage}%`;
+    percentageText.textContent = `${Math.floor(percentage)}%`; // نمایش درصد کامل
+  };
+
+  const simulateLoading = () => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      if (progress < 100) {
+        progress += Math.random() * 20; // افزایش تصادفی
+        if (progress > 100) progress = 100;
+        updateProgress(progress);
+      } else {
+        clearInterval(interval);
+        loader.style.opacity = "0";
+        setTimeout(() => {
+          loader.style.display = "none";
+          document.querySelector('.main').style.display = 'block'
+        }, 500);
+      }
+    }, 300);
+  };
+
+  // غیرفعال‌سازی اسکرول هنگام لودینگ
+  document.body.style.overflow = "hidden";
+
+  // شبیه‌سازی بارگذاری
+  simulateLoading();
 });
 
+
 function saveLocal() {
-  if (num1 !== null && op !== null && num2 !== null) {
-    saveTransaction(num1, op, num2, result); // ارسال مقدار result
+  if (firstNumber !== null && operator !== null && secondNumber !== null) {
+    saveTransaction(+firstNumber, operator, +secondNumber, +result); // ارسال مقدار result
   }
 }
 
