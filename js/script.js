@@ -288,40 +288,8 @@ function loadTransactions() {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadTransactions(); // بازیابی و نمایش معاملات ذخیره‌شده
-
-  const loader = document.querySelector(".loader");
-  const progressBar = document.querySelector(".loader-line");
-  const percentageText = document.querySelector(".loader-percentage");
-  const percentageBg = document.querySelector(".loader-percentage-bg");
-
-  const updateProgress = (percentage) => {
-    percentageBg.style.width = `${percentage}%`;
-    percentageText.textContent = `${Math.floor(percentage)}%`; // نمایش درصد کامل
-  };
-
-  const simulateLoading = () => {
-    let progress = 0;
-    const interval = setInterval(() => {
-      if (progress < 100) {
-        progress += Math.random() * 20; // افزایش تصادفی
-        if (progress > 100) progress = 100;
-        updateProgress(progress);
-      } else {
-        clearInterval(interval);
-        loader.style.opacity = "0";
-        setTimeout(() => {
-          loader.style.display = "none";
-          document.querySelector('.main').style.display = 'block'
-        }, 500);
-      }
-    }, 300);
-  };
-
-  // غیرفعال‌سازی اسکرول هنگام لودینگ
-  document.body.style.overflow = "hidden";
-
-  // شبیه‌سازی بارگذاری
-  simulateLoading();
+  
+  localStorage.getItem('theme') == 'dark' ? document.body.classList.add('dark-mode') : '';
 });
 
 
@@ -340,11 +308,6 @@ btnDropList.addEventListener('click',()=>{
 
 
 document.getElementById("theme-toggle").addEventListener("click", function () {
-  const body = document.body;
-
-  if (body.classList.contains("dark-mode")) {
-    body.classList.remove("dark-mode");
-  } else {
-    body.classList.add("dark-mode");
-  }
+  document.body.classList.toggle('dark-mode')
+  localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
 });
